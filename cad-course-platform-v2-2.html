@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D & 3D CAD — Micro Credential Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c0f;
+  --surface: #111419;
+  --surface2: #181d24;
+  --border: #1e2530;
+  --accent: #f5a623;
+  --accent2: #00d4ff;
+  --accent3: #7fff6a;
+  --text: #e8ecf0;
+  --muted: #6b7a8d;
+  --danger: #ff5c5c;
+  --theory: #a78bfa;
+  --practical: #34d399;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.6; min-height:100vh; }
+
+/* ── LOGIN OVERLAY ── */
+#login-overlay {
+  position:fixed; inset:0; background:#0a0c0f; z-index:999;
+  display:flex; align-items:center; justify-content:center;
+}
+.login-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:3rem 2.5rem; width:100%; max-width:420px;
+  position:relative; overflow:hidden;
+}
+.login-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.login-logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:3px; color:var(--accent); margin-bottom:0.3rem; }
+.login-logo span { color:var(--accent2); }
+.login-sub { color:var(--muted); font-size:13px; margin-bottom:2rem; font-family:'JetBrains Mono',monospace; }
+.login-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-family:'JetBrains Mono',monospace; display:block; margin-bottom:6px; }
+.login-input {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
+  padding:10px 14px; margin-bottom:1.2rem; outline:none;
+  transition:border-color 0.2s;
+}
+.login-input:focus { border-color:var(--accent2); }
+.login-btn {
+  width:100%; background:var(--accent); color:#0a0c0f;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:14px;
+  text-transform:uppercase; letter-spacing:1px; padding:12px;
+  border:none; cursor:pointer; transition:opacity 0.2s; margin-top:0.5rem;
+}
+.login-btn:hover { opacity:0.85; }
+.login-hint { font-size:11px; color:var(--muted); text-align:center; margin-top:1rem; font-family:'JetBrains Mono',monospace; }
+.login-error { color:var(--danger); font-size:12px; margin-bottom:0.8rem; display:none; }
+
+/* ── HEADER ── */
+header {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:0 2rem; display:flex; align-items:center; justify-content:space-between;
+  height:64px; position:sticky; top:0; z-index:100;
+}
+.logo { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:2px; color:var(--accent); }
+.logo span { color:var(--accent2); }
+.header-right { display:flex; align-items:center; gap:1.2rem; }
+.user-badge {
+  display:flex; align-items:center; gap:0.6rem;
+  background:var(--surface2); border:1px solid var(--border);
+  padding:5px 12px; font-size:13px; font-family:'JetBrains Mono',monospace;
+}
+.user-dot { width:8px; height:8px; border-radius:50%; background:var(--accent3); }
+.logout-btn {
+  background:none; border:1px solid var(--border); color:var(--muted);
+  font-size:11px; font-family:'JetBrains Mono',monospace; text-transform:uppercase;
+  letter-spacing:1px; padding:6px 12px; cursor:pointer; transition:all 0.2s;
+}
+.logout-btn:hover { border-color:var(--danger); color:var(--danger); }
+
+/* ── HERO ── */
+.hero { background:var(--surface); border-bottom:1px solid var(--border); padding:4rem 2rem 3rem; position:relative; overflow:hidden; }
+.hero::before { content:'CAD'; position:absolute; right:-2rem; top:-1rem; font-family:'Bebas Neue',sans-serif; font-size:22rem; color:rgba(245,166,35,0.04); line-height:1; pointer-events:none; }
+.hero-inner { max-width:900px; margin:0 auto; position:relative; }
+.badge { display:inline-block; background:rgba(245,166,35,0.15); color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; padding:4px 12px; letter-spacing:1px; text-transform:uppercase; margin-bottom:1.2rem; border:1px solid rgba(245,166,35,0.3); }
+h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,8vw,5.5rem); line-height:0.95; letter-spacing:2px; margin-bottom:1.2rem; }
+h1 .line2 { color:var(--accent2); display:block; }
+.hero-desc { color:var(--muted); font-size:1rem; max-width:520px; margin-bottom:2rem; font-weight:300; }
+.stats-row { display:flex; gap:2rem; flex-wrap:wrap; align-items:center; }
+.stat { display:flex; flex-direction:column; }
+.stat-val { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; color:var(--accent); line-height:1; }
+.stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-family:'JetBrains Mono',monospace; }
+.stat-divider { width:1px; height:40px; background:var(--border); }
+.overall-progress-bar { margin-top:1.8rem; }
+.op-label { font-size:11px; font-family:'JetBrains Mono',monospace; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; display:flex; justify-content:space-between; }
+.op-track { height:6px; background:var(--border); }
+.op-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.6s ease; width:0%; }
+
+/* ── TABS ── */
+.tabs-bar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 2rem; display:flex; position:sticky; top:64px; z-index:90; overflow-x:auto; }
+.tab-btn { background:none; border:none; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.8px; padding:1rem 1.3rem; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; }
+.tab-btn:hover { color:var(--text); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* ── MAIN ── */
+.main { max-width:1000px; margin:0 auto; padding:3rem 2rem; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+.section-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:1.5px; margin-bottom:1.5rem; }
+
+/* ── OVERVIEW ── */
+.overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem; }
+@media(max-width:600px){ .overview-grid { grid-template-columns:1fr; } }
+.info-card { background:var(--surface); border:1px solid var(--border); padding:1.5rem; }
+.card-label { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:0.8rem; }
+.bar-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.5rem; }
+.bar-track { flex:1; height:6px; background:var(--border); }
+.bar-fill-theory { height:100%; background:var(--theory); width:40%; }
+.bar-fill-practical { height:100%; background:var(--practical); width:60%; }
+.bar-label { width:80px; font-size:12px; color:var(--muted); }
+.bar-val { width:50px; text-align:right; font-family:'JetBrains Mono',monospace; font-size:12px; }
+.theory-dot { color:var(--theory); }
+.practical-dot { color:var(--practical); }
+.objectives-list { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+.objectives-list li { display:flex; gap:0.7rem; align-items:flex-start; font-size:0.88rem; color:var(--muted); }
+.objectives-list li::before { content:'→'; color:var(--accent); flex-shrink:0; }
+.outcome-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+@media(max-width:700px){ .outcome-cards { grid-template-columns:1fr; } }
+.outcome-card { background:var(--surface2); border:1px solid var(--border); padding:1.2rem; border-top:3px solid var(--accent3); }
+.outcome-card p { font-size:0.88rem; color:var(--muted); }
+.outcomes-section h3 { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; letter-spacing:1px; margin-bottom:1rem; color:var(--accent2); }
+
+/* ── MODULES / LESSONS ── */
+.module-list { display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); }
+.module-item { background:var(--surface); overflow:hidden; }
+.module-header { display:flex; align-items:center; gap:1rem; padding:1.2rem 1.5rem; cursor:pointer; transition:background 0.15s; user-select:none; }
+.module-header:hover { background:var(--surface2); }
+.module-num { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--border); min-width:48px; line-height:1; }
+.module-item.open .module-num { color:var(--accent); }
+.module-title-wrap { flex:1; }
+.module-title { font-weight:600; font-size:1rem; margin-bottom:4px; }
+.module-meta { display:flex; gap:1rem; font-size:12px; align-items:center; flex-wrap:wrap; }
+.meta-theory { color:var(--theory); font-family:'JetBrains Mono',monospace; }
+.meta-practical { color:var(--practical); font-family:'JetBrains Mono',monospace; }
+.module-status { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 8px; border:1px solid; }
+.status-locked { color:var(--muted); border-color:var(--border); }
+.status-unlocked { color:var(--accent2); border-color:var(--accent2); }
+.status-done { color:var(--accent3); border-color:var(--accent3); }
+.chevron { color:var(--muted); font-size:18px; transition:transform 0.25s; }
+.module-item.open .chevron { transform:rotate(180deg); }
+.module-body { display:none; padding:0 1.5rem 1.5rem 4rem; }
+.module-item.open .module-body { display:block; }
+
+/* VIDEO EMBED */
+.video-embed { margin-bottom:1.5rem; }
+.video-label { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:0.6rem; }
+.video-placeholder {
+  background:var(--surface2); border:1px solid var(--border);
+  aspect-ratio:16/9; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:0.8rem;
+  cursor:pointer; transition:border-color 0.2s; position:relative; overflow:hidden;
+}
+.video-placeholder:hover { border-color:var(--accent2); }
+.video-placeholder .play-icon { font-size:2.5rem; opacity:0.6; }
+.video-placeholder .vid-title { font-size:0.88rem; color:var(--muted); }
+.video-placeholder .vid-badge { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent); border:1px solid rgba(245,166,35,0.3); padding:3px 8px; background:rgba(245,166,35,0.08); }
+.video-placeholder iframe { position:absolute; inset:0; width:100%; height:100%; border:none; display:none; }
+.video-placeholder.playing iframe { display:block; }
+.video-placeholder.playing .play-icon,
+.video-placeholder.playing .vid-title,
+.video-placeholder.playing .vid-badge { display:none; }
+
+.content-section { margin-bottom:1.2rem; }
+.content-section-title { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem; }
+.content-section-title::before { content:''; display:inline-block; width:8px; height:8px; border-radius:50%; }
+.theory-section .content-section-title::before { background:var(--theory); }
+.practical-section .content-section-title::before { background:var(--practical); }
+.topic-list { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.topic-list li { font-size:0.88rem; color:var(--muted); padding-left:1rem; position:relative; }
+.topic-list li::before { content:'·'; position:absolute; left:0; color:var(--accent); }
+
+/* QUIZ TRIGGER */
+.quiz-trigger-btn {
+  margin-top:1rem; background:var(--surface2); border:1px solid var(--accent);
+  color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px;
+  text-transform:uppercase; letter-spacing:1px; padding:8px 18px; cursor:pointer;
+  transition:all 0.2s; display:flex; align-items:center; gap:0.5rem;
+}
+.quiz-trigger-btn:hover { background:var(--accent); color:#0a0c0f; }
+.quiz-trigger-btn.done { border-color:var(--accent3); color:var(--accent3); }
+.quiz-trigger-btn.done:hover { background:var(--accent3); color:#0a0c0f; }
+
+/* ── QUIZ MODAL ── */
+#quiz-modal {
+  position:fixed; inset:0; background:rgba(10,12,15,0.95); z-index:500;
+  display:none; align-items:center; justify-content:center; padding:1rem;
+}
+#quiz-modal.open { display:flex; }
+.quiz-box {
+  background:var(--surface); border:1px solid var(--border);
+  width:100%; max-width:640px; max-height:90vh; overflow-y:auto;
+  position:relative;
+}
+.quiz-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--theory),var(--accent2)); }
+.quiz-header { padding:1.8rem 2rem 1rem; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; }
+.quiz-module-tag { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--theory); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.3rem; }
+.quiz-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:1px; }
+.quiz-close { background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer; padding:0 0.3rem; line-height:1; }
+.quiz-close:hover { color:var(--danger); }
+.quiz-body { padding:1.5rem 2rem; }
+.quiz-progress-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.quiz-progress-label { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+.quiz-progress-track { flex:1; height:3px; background:var(--border); margin:0 1rem; }
+.quiz-progress-fill { height:100%; background:var(--theory); transition:width 0.4s; }
+.question-text { font-weight:600; font-size:1rem; margin-bottom:1.2rem; line-height:1.5; }
+.options-list { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem; }
+.option-btn {
+  background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.9rem;
+  padding:10px 14px; text-align:left; cursor:pointer; transition:all 0.15s;
+  display:flex; align-items:center; gap:0.8rem;
+}
+.option-btn:hover:not(:disabled) { border-color:var(--accent2); color:var(--accent2); }
+.option-btn.correct { border-color:var(--accent3); background:rgba(127,255,106,0.08); color:var(--accent3); }
+.option-btn.wrong { border-color:var(--danger); background:rgba(255,92,92,0.08); color:var(--danger); }
+.option-btn:disabled { cursor:default; }
+.option-key { font-family:'JetBrains Mono',monospace; font-size:11px; width:20px; flex-shrink:0; opacity:0.5; }
+.quiz-feedback { font-size:0.88rem; padding:10px 14px; margin-bottom:1.2rem; display:none; }
+.quiz-feedback.correct { background:rgba(127,255,106,0.08); border:1px solid rgba(127,255,106,0.3); color:var(--accent3); }
+.quiz-feedback.wrong { background:rgba(255,92,92,0.08); border:1px solid rgba(255,92,92,0.3); color:var(--danger); }
+.quiz-next-btn {
+  background:var(--accent); color:#0a0c0f; border:none;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px;
+  text-transform:uppercase; letter-spacing:0.5px; padding:10px 24px;
+  cursor:pointer; display:none; transition:opacity 0.2s;
+}
+.quiz-next-btn:hover { opacity:0.85; }
+.quiz-result { text-align:center; padding:2rem 0; }
+.quiz-result-score { font-family:'Bebas Neue',sans-serif; font-size:5rem; line-height:1; }
+.quiz-result-score.pass { color:var(--accent3); }
+.quiz-result-score.fail { color:var(--danger); }
+.quiz-result-label { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; }
+.quiz-result-msg { font-size:0.9rem; color:var(--muted); max-width:320px; margin:0 auto 1.5rem; }
+.quiz-result-btns { display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; }
+.quiz-retry-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px 18px; cursor:pointer; transition:all 0.2s; }
+.quiz-retry-btn:hover { border-color:var(--text); color:var(--text); }
+.quiz-done-btn { background:var(--accent3); color:#0a0c0f; border:none; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; padding:10px 24px; cursor:pointer; transition:opacity 0.2s; }
+.quiz-done-btn:hover { opacity:0.85; }
+
+/* ── ASSESSMENT TAB ── */
+.assessment-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2.5rem; }
+@media(max-width:600px){ .assessment-grid { grid-template-columns:1fr; } }
+.assess-card { background:var(--surface); border:1px solid var(--border); padding:2rem; }
+.assess-pct { font-family:'Bebas Neue',sans-serif; font-size:4rem; line-height:1; margin-bottom:0.5rem; }
+.assess-card.theory-card .assess-pct { color:var(--theory); }
+.assess-card.practical-card .assess-pct { color:var(--practical); }
+.assess-title { font-weight:700; font-size:1rem; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:1rem; }
+.assess-items { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+.assess-items li { font-size:0.88rem; color:var(--muted); display:flex; gap:0.5rem; align-items:flex-start; }
+.assess-items li::before { content:'✓'; color:var(--accent3); flex-shrink:0; }
+.progress-tracker { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-bottom:1.5rem; }
+.progress-tracker h3 { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:1px; color:var(--accent); margin-bottom:1.5rem; }
+.prog-row { display:grid; grid-template-columns:160px 1fr 60px 80px; align-items:center; gap:1rem; font-size:12px; margin-bottom:0.8rem; }
+.prog-name { color:var(--muted); }
+.prog-track { height:4px; background:var(--border); }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.6s ease; }
+.prog-pct { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); text-align:right; }
+.prog-badge { font-family:'JetBrains Mono',monospace; font-size:9px; text-align:center; padding:2px 6px; border:1px solid; }
+.prog-badge.done { color:var(--accent3); border-color:var(--accent3); }
+.prog-badge.pending { color:var(--muted); border-color:var(--border); }
+
+/* ── SOFTWARE TAB ── */
+.software-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; }
+@media(max-width:600px){ .software-grid { grid-template-columns:1fr; } }
+.sw-card { background:var(--surface); border:1px solid var(--border); padding:2rem; position:relative; overflow:hidden; }
+.sw-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+.sw-icon { font-size:2.5rem; margin-bottom:1rem; display:block; }
+.sw-name { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:1px; margin-bottom:0.3rem; }
+.sw-desc { color:var(--muted); font-size:0.88rem; margin-bottom:1.2rem; }
+.sw-modules { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:0.5px; }
+
+/* ── CERTIFICATE TAB ── */
+.cert-locked { text-align:center; padding:4rem 2rem; }
+.cert-locked-icon { font-size:4rem; margin-bottom:1rem; opacity:0.3; }
+.cert-locked h3 { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:1px; color:var(--muted); margin-bottom:0.5rem; }
+.cert-locked p { color:var(--muted); font-size:0.9rem; max-width:360px; margin:0 auto; }
+.cert-requirements { display:flex; flex-direction:column; gap:0.6rem; margin-top:1.5rem; max-width:360px; margin-left:auto; margin-right:auto; }
+.cert-req-row { display:flex; align-items:center; gap:0.8rem; font-size:13px; color:var(--muted); font-family:'JetBrains Mono',monospace; }
+.cert-req-dot { width:8px; height:8px; border-radius:50%; background:var(--border); flex-shrink:0; }
+.cert-req-dot.done { background:var(--accent3); }
+
+#cert-unlocked { display:none; }
+.cert-card-wrap { display:flex; justify-content:center; margin-bottom:2rem; }
+.cert-card {
+  background:var(--surface); border:2px solid var(--accent);
+  padding:3rem 2.5rem; width:100%; max-width:640px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.cert-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at top,rgba(245,166,35,0.05),transparent 60%); pointer-events:none; }
+.cert-card-corner { position:absolute; font-family:'Bebas Neue',sans-serif; font-size:6rem; color:rgba(245,166,35,0.06); line-height:1; }
+.cert-card-corner.tl { top:-1rem; left:-0.5rem; }
+.cert-card-corner.br { bottom:-1rem; right:-0.5rem; transform:scaleX(-1); }
+.cert-issued { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:1.5rem; }
+.cert-present { font-family:'DM Sans',sans-serif; font-style:italic; font-weight:300; color:var(--muted); font-size:0.9rem; margin-bottom:0.3rem; }
+.cert-name { font-family:'Bebas Neue',sans-serif; font-size:3rem; letter-spacing:3px; color:var(--accent); line-height:1.1; margin-bottom:0.3rem; }
+.cert-desc { color:var(--muted); font-size:0.85rem; margin-bottom:2rem; }
+.cert-course-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; color:var(--text); margin-bottom:0.3rem; }
+.cert-course-sub { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:1px; }
+.cert-divider { width:60px; height:2px; background:var(--accent); margin:1.5rem auto; }
+.cert-meta-row { display:flex; justify-content:center; gap:3rem; }
+.cert-meta { display:flex; flex-direction:column; align-items:center; }
+.cert-meta-val { font-family:'Bebas Neue',sans-serif; font-size:1.5rem; color:var(--accent); }
+.cert-meta-label { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.cert-seal { margin:1.5rem auto 0; width:60px; height:60px; border:2px solid var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
+.cert-actions { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; }
+.cert-dl-btn { background:var(--accent); color:#0a0c0f; border:none; font-family:'DM Sans',sans-serif; font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; padding:12px 28px; cursor:pointer; transition:opacity 0.2s; }
+.cert-dl-btn:hover { opacity:0.85; }
+.cert-share-btn { background:none; border:1px solid var(--border); color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:12px 20px; cursor:pointer; transition:all 0.2s; }
+.cert-share-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+
+footer { border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--muted); font-size:12px; font-family:'JetBrains Mono',monospace; letter-spacing:0.5px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN OVERLAY ══════════ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo">ARCH<span>CAD</span></div>
+    <div class="login-sub">2D & 3D CAD · Micro Credential</div>
+    <div class="login-error" id="login-error">Invalid credentials. Try: student / cad2025</div>
+    <label class="login-label" for="login-user">Username</label>
+    <input class="login-input" id="login-user" type="text" placeholder="Enter username" autocomplete="off">
+    <label class="login-label" for="login-pass">Password</label>
+    <input class="login-input" id="login-pass" type="password" placeholder="Enter password">
+    <button class="login-btn" onclick="doLogin()">Sign In & Start Learning</button>
+    <div class="login-hint">Demo: username <b>student</b> · password <b>cad2025</b></div>
+  </div>
+</div>
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="logo">ARCH<span>CAD</span></div>
+  <div class="header-right">
+    <div class="user-badge"><div class="user-dot"></div><span id="header-username">—</span></div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+</header>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">Micro Credential Course</div>
+    <h1>2D & 3D<span class="line2">CAD MASTERY</span></h1>
+    <p class="hero-desc">From AutoCAD fundamentals to SketchUp 3D modeling — a hands-on professional course for aspiring architects and civil engineers.</p>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-val">40</span><span class="stat-label">Total Hours</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-val theory-dot">12</span><span class="stat-label">Theory Hrs</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-val practical-dot">28</span><span class="stat-label">Practical Hrs</span></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-val">7</span><span class="stat-label">Modules</span></div>
+    </div>
+    <div class="overall-progress-bar">
+      <div class="op-label"><span>Overall Progress</span><span id="overall-pct-label">0%</span></div>
+      <div class="op-track"><div class="op-fill" id="overall-bar"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TABS ══════════ -->
+<nav class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('overview',this)">Overview</button>
+  <button class="tab-btn" onclick="switchTab('lessons',this)">Lessons</button>
+  <button class="tab-btn" onclick="switchTab('assessment',this)">Progress</button>
+  <button class="tab-btn" onclick="switchTab('software',this)">Software</button>
+  <button class="tab-btn" onclick="switchTab('certificate',this)">Certificate</button>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="main">
+
+<!-- OVERVIEW -->
+<div id="tab-overview" class="tab-panel active">
+  <div class="overview-grid">
+    <div class="info-card">
+      <div class="card-label">Hours Breakdown</div>
+      <div class="bar-row"><span class="bar-label theory-dot">■ Theory</span><div class="bar-track"><div class="bar-fill-theory"></div></div><span class="bar-val theory-dot">12 hrs</span></div>
+      <div class="bar-row"><span class="bar-label practical-dot">■ Practical</span><div class="bar-track"><div class="bar-fill-practical"></div></div><span class="bar-val practical-dot">28 hrs</span></div>
+      <div style="margin-top:1rem;font-size:12px;color:var(--muted);">60% hands-on practice ensures real industry readiness.</div>
+    </div>
+    <div class="info-card">
+      <div class="card-label">Course Objectives</div>
+      <ul class="objectives-list">
+        <li>Foundational knowledge of AutoCAD software</li>
+        <li>Essential commands for drafting & 3D modeling</li>
+        <li>Industry-standard architectural & civil drawings</li>
+        <li>Real-life work scenario preparedness</li>
+      </ul>
+    </div>
+  </div>
+  <div class="outcomes-section">
+    <h3>Learning Outcomes</h3>
+    <div class="outcome-cards">
+      <div class="outcome-card"><div style="font-weight:600;margin-bottom:0.5rem;">AutoCAD Proficiency</div><p>Comprehensive understanding of tools, commands, and professional drafting practices.</p></div>
+      <div class="outcome-card"><div style="font-weight:600;margin-bottom:0.5rem;">2D & 3D Production</div><p>Create accurate 2D drawings and basic 3D models for real-world projects.</p></div>
+      <div class="outcome-card"><div style="font-weight:600;margin-bottom:0.5rem;">Industry Ready</div><p>Apply skills directly in internships or entry-level positions in architecture & engineering.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- LESSONS -->
+<div id="tab-lessons" class="tab-panel">
+  <div class="section-title">Course Modules</div>
+  <div class="module-list" id="module-list">
+
+    <!-- M1 -->
+    <div class="module-item" id="mod-1">
+      <div class="module-header" onclick="toggleModule(1)">
+        <div class="module-num">01</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Introduction to AutoCAD</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 1h Theory</span>
+            <span class="meta-practical">■ 4h Practical</span>
+            <span class="module-status status-unlocked" id="status-1">UNLOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-1">▼</div>
+      </div>
+      <div class="module-body" id="body-1">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/WLh-qHMqP6M?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Introduction to AutoCAD Interface</span>
+            <span class="vid-badge">WATCH NOW</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Introduction to AutoCAD</li><li>AutoCAD Interface and Commands</li><li>Dimension Style and Text Command</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Drafting Views and Page Setup Practice</li><li>Using Menu Bar, Toolbar, and Commands</li><li>Dimension Styles and Annotations Practice</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-1" onclick="openQuiz(1)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M2 -->
+    <div class="module-item" id="mod-2">
+      <div class="module-header" onclick="toggleModule(2)">
+        <div class="module-num">02</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Essential AutoCAD Commands</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 2h Theory</span>
+            <span class="meta-practical">■ 4h Practical</span>
+            <span class="module-status status-locked" id="status-2">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-2">▼</div>
+      </div>
+      <div class="module-body" id="body-2">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/lajVoVpb1go?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Layers, Blocks & Essential Commands</span>
+            <span class="vid-badge">WATCH NOW</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Layers and Blocks</li><li>Architectural Planning Principles</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Text, Layers, and Blocks Practice</li><li>Drawing exterior walls & building layout</li><li>Adding interior walls, doors, and windows</li><li>Working with layers to organize elements</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-2" onclick="openQuiz(2)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M3 -->
+    <div class="module-item" id="mod-3">
+      <div class="module-header" onclick="toggleModule(3)">
+        <div class="module-num">03</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Drafting Fundamentals — Plan & Elevation</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 1h Theory</span>
+            <span class="meta-practical">■ 4h Practical</span>
+            <span class="module-status status-locked" id="status-3">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-3">▼</div>
+      </div>
+      <div class="module-body" id="body-3">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/IStgI47GJG8?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Floor Plans, Elevations & Annotations</span>
+            <span class="vid-badge">WATCH NOW</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Architectural Planning Principles</li><li>Elevation Fundamentals</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Detailing floor plan with furniture, fixtures & dimensions</li><li>Applying text styles for labels and annotations</li><li>Finalizing floor plan and applying planning concepts</li><li>Exporting plan to different formats</li><li>Elevation Drawing Practice</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-3" onclick="openQuiz(3)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M4 -->
+    <div class="module-item" id="mod-4">
+      <div class="module-header" onclick="toggleModule(4)">
+        <div class="module-num">04</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Drafting Fundamentals — Section & Stairs</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 2h Theory</span>
+            <span class="meta-practical">■ 4h Practical</span>
+            <span class="module-status status-locked" id="status-4">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-4">▼</div>
+      </div>
+      <div class="module-body" id="body-4">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/placeholder?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Sections, Sectional Elevations & Stair Details</span>
+            <span class="vid-badge">PASTE YOUR VIDEO URL</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Section Fundamentals</li><li>Building elevations basics</li><li>Understanding sectional elevations</li><li>Understanding stairs & lifts</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Longitudinal sectional view</li><li>Cross-sectional view through a building part</li><li>Line types, hatching, and detailing</li><li>Sectional views with annotations & dimensions</li><li>Detail Drawing: stairs & lifts</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-4" onclick="openQuiz(4)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M5 -->
+    <div class="module-item" id="mod-5">
+      <div class="module-header" onclick="toggleModule(5)">
+        <div class="module-num">05</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Structural Drawing Principles</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 2h Theory</span>
+            <span class="meta-practical">■ 4h Practical</span>
+            <span class="module-status status-locked" id="status-5">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-5">▼</div>
+      </div>
+      <div class="module-body" id="body-5">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/placeholder?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Structural Drawings: Foundations, Beams & Slabs</span>
+            <span class="vid-badge">PASTE YOUR VIDEO URL</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Introduction to Structural Drawings</li><li>RCC Retaining Walls, Footing & Pile Foundations</li><li>Beams (Continuous & T-Beam), Slabs (One Way, Two Way)</li><li>Lift Shafts and Septic Tanks</li><li>Underground & Overhead Water Tanks</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Drafting RCC Retaining Wall & Footing Foundation</li><li>Pile Foundations and Continuous/T-Beams</li><li>One-Way, Two-Way Slabs and Staircases</li><li>Lift Shafts and Septic Tanks</li><li>Underground & Overhead Reservoirs</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-5" onclick="openQuiz(5)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M6 -->
+    <div class="module-item" id="mod-6">
+      <div class="module-header" onclick="toggleModule(6)">
+        <div class="module-num">06</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Electrical Drawings & SketchUp 3D Modeling</div>
+          <div class="module-meta">
+            <span class="meta-theory">■ 2h Theory</span>
+            <span class="meta-practical">■ 6h Practical</span>
+            <span class="module-status status-locked" id="status-6">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-6">▼</div>
+      </div>
+      <div class="module-body" id="body-6">
+        <div class="video-embed">
+          <div class="video-label">📹 Lesson Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/placeholder?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Electrical Layouts & SketchUp 3D Introduction</span>
+            <span class="vid-badge">PASTE YOUR VIDEO URL</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section theory-section">
+          <div class="content-section-title">Theory</div>
+          <ul class="topic-list"><li>Electrical layouts for residential/commercial buildings</li><li>Electrical symbols, circuits, and layout planning</li></ul>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Drawing electrical layouts for buildings</li><li>Introduction to 3D Modeling in SketchUp</li><li>SketchUp Interface and Commands</li><li>Import a CAD file into SketchUp</li><li>Push/pull tool to create walls</li><li>Model windows, doors & architectural features</li><li>Components from 3D Warehouse</li><li>Visualization</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-6" onclick="openQuiz(6)">📝 Take Module Quiz</button>
+      </div>
+    </div>
+
+    <!-- M7 -->
+    <div class="module-item" id="mod-7">
+      <div class="module-header" onclick="toggleModule(7)">
+        <div class="module-num">07</div>
+        <div class="module-title-wrap">
+          <div class="module-title">Final Project & Assessment</div>
+          <div class="module-meta">
+            <span class="meta-practical">■ 2h Practical</span>
+            <span class="module-status status-locked" id="status-7">LOCKED</span>
+          </div>
+        </div>
+        <div class="chevron" id="chev-7">▼</div>
+      </div>
+      <div class="module-body" id="body-7">
+        <div class="video-embed">
+          <div class="video-label">📹 Project Briefing Video</div>
+          <div class="video-placeholder" onclick="playVideo(this,'https://www.youtube.com/embed/placeholder?autoplay=1')">
+            <span class="play-icon">▶</span>
+            <span class="vid-title">Final Project Brief & Submission Guidelines</span>
+            <span class="vid-badge">PASTE YOUR VIDEO URL</span>
+            <iframe allowfullscreen allow="autoplay"></iframe>
+          </div>
+        </div>
+        <div class="content-section practical-section">
+          <div class="content-section-title">Practical</div>
+          <ul class="topic-list"><li>Final project replicating a real-life industry scenario</li><li>Includes both 2D and 3D elements</li><li>Demonstrates full AutoCAD workflow & 3D view</li><li>Assessed on accuracy, completeness & industry standards</li></ul>
+        </div>
+        <button class="quiz-trigger-btn" id="quiz-btn-7" onclick="openQuiz(7)">📝 Final Assessment Quiz</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div id="tab-assessment" class="tab-panel">
+  <div class="section-title">Your Progress</div>
+  <div class="assessment-grid">
+    <div class="assess-card theory-card">
+      <div class="assess-pct">40%</div>
+      <div class="assess-title">Theory Assessment</div>
+      <ul class="assess-items"><li>Quizzes after each theoretical module</li><li>Final written exam covering all theory</li></ul>
+    </div>
+    <div class="assess-card practical-card">
+      <div class="assess-pct">60%</div>
+      <div class="assess-title">Practical Assessment</div>
+      <ul class="assess-items"><li>Regular assignments and classwork</li><li>Final project evaluated on industry standards</li></ul>
+    </div>
+  </div>
+  <div class="progress-tracker">
+    <h3>Module Quiz Results</h3>
+    <div id="progress-rows"></div>
+  </div>
+</div>
+
+<!-- SOFTWARE -->
+<div id="tab-software" class="tab-panel">
+  <div class="section-title">Software Covered</div>
+  <div class="software-grid">
+    <div class="sw-card"><span class="sw-icon">📐</span><div class="sw-name">AutoCAD</div><div class="sw-desc">Industry-standard 2D drafting software. Core tool for all technical drawings in this course.</div><div class="sw-modules">MODULES 1 – 5 · M7</div></div>
+    <div class="sw-card"><span class="sw-icon">🏗️</span><div class="sw-name">SketchUp</div><div class="sw-desc">Intuitive 3D modeling for architectural visualization. Transforms 2D CAD into 3D building models.</div><div class="sw-modules">MODULE 6 · M7</div></div>
+  </div>
+  <div style="margin-top:2rem;background:var(--surface);border:1px solid var(--border);padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:0.8rem;">Skills You'll Develop</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Floor Plans</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Elevations</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Sections</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Structural Details</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Electrical Layouts</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">3D Modeling</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Visualization</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">Annotations</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);font-size:12px;padding:4px 12px;font-family:'JetBrains Mono',monospace;color:var(--accent2);">CAD Export</span>
+    </div>
+  </div>
+</div>
+
+<!-- CERTIFICATE -->
+<div id="tab-certificate" class="tab-panel">
+  <div class="section-title">Certificate of Completion</div>
+
+  <div id="cert-locked-view">
+    <div class="cert-locked">
+      <div class="cert-locked-icon">🏅</div>
+      <h3>Certificate Locked</h3>
+      <p>Complete all 7 module quizzes with a passing score (≥70%) to unlock your certificate.</p>
+      <div class="cert-requirements" id="cert-reqs"></div>
+    </div>
+  </div>
+
+  <div id="cert-unlocked">
+    <div class="cert-card-wrap">
+      <div class="cert-card">
+        <span class="cert-card-corner tl">◈</span>
+        <span class="cert-card-corner br">◈</span>
+        <div class="cert-issued">Certificate of Completion · <span id="cert-date"></span></div>
+        <div class="cert-present">This is to certify that</div>
+        <div class="cert-name" id="cert-student-name">STUDENT NAME</div>
+        <div class="cert-desc">has successfully completed all requirements of</div>
+        <div class="cert-course-title">2D & 3D CAD MASTERY</div>
+        <div class="cert-course-sub">MICRO CREDENTIAL · ARCHCAD INSTITUTE</div>
+        <div class="cert-divider"></div>
+        <div class="cert-meta-row">
+          <div class="cert-meta"><div class="cert-meta-val">40</div><div class="cert-meta-label">Hours</div></div>
+          <div class="cert-meta"><div class="cert-meta-val">7</div><div class="cert-meta-label">Modules</div></div>
+          <div class="cert-meta"><div class="cert-meta-val" id="cert-score">—</div><div class="cert-meta-label">Avg Score</div></div>
+        </div>
+        <div class="cert-seal">🎓</div>
+      </div>
+    </div>
+    <div class="cert-actions">
+      <button class="cert-dl-btn" onclick="printCert()">⬇ Download Certificate</button>
+      <button class="cert-share-btn" onclick="shareCert()">↗ Share Achievement</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ══════════ QUIZ MODAL ══════════ -->
+<div id="quiz-modal">
+  <div class="quiz-box">
+    <div class="quiz-header">
+      <div>
+        <div class="quiz-module-tag" id="qm-tag">Module 1</div>
+        <div class="quiz-title" id="qm-title">Module Quiz</div>
+      </div>
+      <button class="quiz-close" onclick="closeQuiz()">✕</button>
+    </div>
+    <div class="quiz-body" id="quiz-body"></div>
+  </div>
+</div>
+
+<footer>2D & 3D CAD · Micro Credential · 40 Hours · 7 Modules · ArchCAD Institute</footer>
+
+<script>
+// ══ STATE ══
+let currentUser = null;
+let quizScores = {}; // {1: 80, 2: 90, ...}
+let currentQuiz = { moduleId: 0, qIdx: 0, score: 0, answered: false };
+
+const MODULE_TITLES = {
+  1:'Introduction to AutoCAD', 2:'Essential AutoCAD Commands',
+  3:'Drafting Fundamentals — Plan & Elevation', 4:'Drafting Fundamentals — Section & Stairs',
+  5:'Structural Drawing Principles', 6:'Electrical Drawings & SketchUp 3D',
+  7:'Final Project & Assessment'
+};
+
+// ══ QUIZ DATA ══
+const quizData = {
+  1:[
+    { q:'What does AutoCAD stand for?', opts:['Automatic Computer-Aided Design','Auto Computer Algorithm Design','Architectural Computer Aided Drawing','Advanced CAD Operations'], ans:0, exp:'AutoCAD = Automatic Computer-Aided Design — software by Autodesk.' },
+    { q:'Which command is used to set up different line widths and colors in AutoCAD?', opts:['BLOCK','LAYER','HATCH','SCALE'], ans:1, exp:'The LAYER command lets you assign colors, line types, and weights to different elements.' },
+    { q:'What is the primary purpose of a Page Setup in AutoCAD?', opts:['To add colors to objects','To define plotting settings for printing','To create new layers','To import images'], ans:1, exp:'Page Setup defines the printer, paper size, and scale for printing/plotting layouts.' },
+    { q:'Which toolbar or panel contains the most commonly used drawing commands?', opts:['Properties Panel','View Ribbon','Home Ribbon','Insert Tab'], ans:2, exp:'The Home Ribbon contains most core drawing and modify commands.' }
+  ],
+  2:[
+    { q:'What is a BLOCK in AutoCAD?', opts:['A solid wall element','A reusable group of objects saved under a name','A type of layer','A hatch pattern'], ans:1, exp:'Blocks are named groups of objects you can insert multiple times, saving file size.' },
+    { q:'Which AutoCAD feature lets you organize drawing elements into categories?', opts:['Viewport','Layers','UCS','Object Snap'], ans:1, exp:'Layers let you group and manage different types of elements (walls, doors, dimensions).' },
+    { q:'In architectural planning, what does "setback" refer to?', opts:['Distance from property line to building','Height of the building','Floor-to-floor height','The staircase width'], ans:0, exp:'Setback is the required minimum distance between a building and the property boundary.' },
+    { q:'What command adds explanatory text to drawings?', opts:['MTEXT','HATCH','FILLET','EXPLODE'], ans:0, exp:'MTEXT (Multiline Text) is used to add text annotations to AutoCAD drawings.' }
+  ],
+  3:[
+    { q:'A floor plan is a drawing viewed from:', opts:['The side','From the front','An overhead cut view','Below the building'], ans:2, exp:'A floor plan is a horizontal cut through the building, viewed from above.' },
+    { q:'Which line type is typically used for hidden elements in elevation drawings?', opts:['Continuous','Center','Dashed','Phantom'], ans:2, exp:'Dashed lines represent hidden or concealed elements not visible in the current view.' },
+    { q:'What does "annotation scale" do in AutoCAD?', opts:['Changes object colors','Automatically adjusts text/dimension size for the viewport scale','Locks layers','Prints the drawing'], ans:1, exp:'Annotation scale ensures text and dimensions display at the correct size when printed.' },
+    { q:'In architectural drawings, what does DWG stand for?', opts:['Drawing','Design Working Graphics','Digital Working Group','Drawing With Grid'], ans:0, exp:'DWG is AutoCAD\'s native file format — short for Drawing.' }
+  ],
+  4:[
+    { q:'A sectional elevation is created by:', opts:['Looking straight at the building front','Cutting through the building and viewing the cut face','Viewing from above','Using 3D perspective'], ans:1, exp:'A section cuts vertically through the building, revealing internal construction.' },
+    { q:'What is a "longitudinal section"?', opts:['A cut along the short axis of the building','A cut along the long axis of the building','A diagonal cut','A horizontal cut'], ans:1, exp:'A longitudinal section cuts along the longest dimension of the building.' },
+    { q:'HATCH in AutoCAD is used to:', opts:['Create blocks','Fill areas with patterns representing materials','Draw circles','Rotate objects'], ans:1, exp:'Hatching fills enclosed areas with patterns — e.g., brickwork, concrete, insulation.' },
+    { q:'What is the standard tread depth for a residential staircase?', opts:['150–175mm','250–300mm','400–450mm','100mm'], ans:1, exp:'Standard residential stair tread depth is 250–300mm for comfortable foot placement.' }
+  ],
+  5:[
+    { q:'What does RCC stand for in structural engineering?', opts:['Rigid Construction Compound','Reinforced Cement Concrete','Reinforced Cable Construction','Raw Concrete Composite'], ans:1, exp:'RCC = Reinforced Cement Concrete — concrete strengthened with steel bars (rebar).' },
+    { q:'A pile foundation is used when:', opts:['Soil bearing capacity is adequate near the surface','The building is single-storey','Weak soil requires transferring load to deeper, stronger strata','There is no basement'], ans:2, exp:'Piles transfer loads past weak upper soil to competent bedrock or dense soil below.' },
+    { q:'What is the difference between a one-way and two-way slab?', opts:['One-way spans in one direction only; two-way spans in both','One-way is thicker','Two-way uses more columns','They are the same'], ans:0, exp:'One-way slabs have span/width ratio >2; two-way slabs span in both directions.' },
+    { q:'What is a T-Beam in construction?', opts:['A beam shaped like the letter T, where slab and beam act together','A steel section only','A type of column','A triangular beam'], ans:0, exp:'T-Beams are formed when the slab and beam are cast together, with the slab acting as the flange.' }
+  ],
+  6:[
+    { q:'What does the push/pull tool in SketchUp do?', opts:['Moves objects in 3D space','Extrudes a flat surface into a 3D volume','Imports CAD files','Colors surfaces'], ans:1, exp:'Push/Pull is SketchUp\'s core tool — it extrudes any flat face into a 3D solid.' },
+    { q:'What is the 3D Warehouse in SketchUp?', opts:['A local file folder','An online library of free 3D components','A rendering plugin','A texture database'], ans:1, exp:'3D Warehouse is Trimble\'s free online library with millions of reusable 3D models.' },
+    { q:'In electrical drawings, what symbol typically represents a wall socket?', opts:['A circle with a cross','Two parallel lines with a line','A rectangle with diagonal lines','A circle with a dot'], ans:1, exp:'Wall sockets/outlets are represented by two parallel lines with a perpendicular line.' },
+    { q:'Why import a CAD file into SketchUp rather than drawing from scratch?', opts:['CAD files are smaller','It uses the accurate dimensions already drafted in AutoCAD','SketchUp cannot draw lines','CAD is faster'], ans:1, exp:'Importing CAD ensures the 3D model uses the precise, scaled geometry from the 2D drawings.' }
+  ],
+  7:[
+    { q:'What should a final industry-standard project submission include?', opts:['Only 3D views','Only floor plans','Complete 2D drawings plus 3D model with annotations','Perspective sketches only'], ans:2, exp:'A complete submission includes floor plans, elevations, sections, structural details, and 3D views.' },
+    { q:'Which of the following best defines "industry standards" in CAD?', opts:['Personal preferences of the drafter','Internationally or nationally recognized conventions for drawing preparation','The fastest way to draw','Any method that produces a result'], ans:1, exp:'Industry standards (like ISO, NBS) ensure drawings are universally readable and consistent.' },
+    { q:'What does scale 1:100 mean on a drawing?', opts:['1 metre in reality = 100 metres on paper','1mm on paper = 100mm in reality','The drawing is 100 times larger than reality','There is no scale'], ans:1, exp:'1:100 means every 1mm on paper represents 100mm (1m) in real life.' },
+    { q:'Which file format is most suitable for sharing final drawings with clients?', opts:['.DWG only','.SKP only','PDF (with CAD file as backup)','JPEG'], ans:2, exp:'PDF is universally readable by clients without specialist software, while CAD files remain editable.' }
+  ]
+};
+
+// ══ LOGIN ══
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-error');
+  if ((u === 'student' && p === 'cad2025') || (u.length > 0 && p.length > 0)) {
+    currentUser = u.charAt(0).toUpperCase() + u.slice(1);
+    document.getElementById('header-username').textContent = currentUser;
+    document.getElementById('cert-student-name').textContent = currentUser.toUpperCase();
+    document.getElementById('login-overlay').style.display = 'none';
+    updateProgress();
+  } else {
+    err.style.display = 'block';
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  currentUser = null;
+  quizScores = {};
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+// ══ TABS ══
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'assessment') renderProgressRows();
+  if (name === 'certificate') renderCertificate();
+}
+
+// ══ MODULES ══
+function toggleModule(id) {
+  const body = document.getElementById('body-' + id);
+  const chev = document.getElementById('chev-' + id);
+  const item = document.getElementById('mod-' + id);
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.module-item').forEach(m => m.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ══ VIDEO ══
+function playVideo(el, url) {
+  const iframe = el.querySelector('iframe');
+  iframe.src = url;
+  el.classList.add('playing');
+}
+
+// ══ QUIZ ══
+function openQuiz(moduleId) {
+  const modal = document.getElementById('quiz-modal');
+  modal.classList.add('open');
+  currentQuiz = { moduleId, qIdx:0, score:0, answered:false };
+  document.getElementById('qm-tag').textContent = 'Module ' + moduleId;
+  document.getElementById('qm-title').textContent = MODULE_TITLES[moduleId];
+  renderQuestion();
+}
+
+function closeQuiz() {
+  document.getElementById('quiz-modal').classList.remove('open');
+}
+
+function renderQuestion() {
+  const { moduleId, qIdx } = currentQuiz;
+  const qs = quizData[moduleId];
+  const q = qs[qIdx];
+  const body = document.getElementById('quiz-body');
+  const keys = ['A','B','C','D'];
+
+  body.innerHTML = `
+    <div class="quiz-progress-row">
+      <span class="quiz-progress-label">Q ${qIdx+1} / ${qs.length}</span>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${(qIdx/qs.length)*100}%"></div></div>
+      <span class="quiz-progress-label">${currentQuiz.score} pts</span>
+    </div>
+    <div class="question-text">${q.q}</div>
+    <div class="options-list">
+      ${q.opts.map((o,i) => `<button class="option-btn" id="opt-${i}" onclick="selectAnswer(${i})"><span class="option-key">${keys[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <button class="quiz-next-btn" id="quiz-next" onclick="nextQuestion()">${qIdx < qs.length-1 ? 'Next Question →' : 'See Results'}</button>
+  `;
+  currentQuiz.answered = false;
+}
+
+function selectAnswer(idx) {
+  if (currentQuiz.answered) return;
+  currentQuiz.answered = true;
+  const { moduleId, qIdx } = currentQuiz;
+  const q = quizData[moduleId][qIdx];
+  const fb = document.getElementById('quiz-feedback');
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const chosen = document.getElementById('opt-' + idx);
+  const correct = document.getElementById('opt-' + q.ans);
+  correct.classList.add('correct');
+  if (idx === q.ans) {
+    currentQuiz.score++;
+    fb.textContent = '✓ Correct! ' + q.exp;
+    fb.className = 'quiz-feedback correct';
+  } else {
+    chosen.classList.add('wrong');
+    fb.textContent = '✗ ' + q.exp;
+    fb.className = 'quiz-feedback wrong';
+  }
+  fb.style.display = 'block';
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  const { moduleId, qIdx, score } = currentQuiz;
+  const total = quizData[moduleId].length;
+  if (qIdx + 1 >= total) {
+    const pct = Math.round((score / total) * 100);
+    quizScores[moduleId] = pct;
+    // unlock next module
+    if (pct >= 70 && moduleId < 7) {
+      const s = document.getElementById('status-' + (moduleId+1));
+      if (s) { s.textContent = 'UNLOCKED'; s.className = 'module-status status-unlocked'; }
+    }
+    // mark current as done
+    const cs = document.getElementById('status-' + moduleId);
+    if (cs) { cs.textContent = 'DONE'; cs.className = 'module-status status-done'; }
+    const qb = document.getElementById('quiz-btn-' + moduleId);
+    if (qb) { qb.textContent = '✓ Quiz Complete — ' + pct + '%'; qb.classList.add('done'); }
+    updateProgress();
+    showResult(pct, total);
+  } else {
+    currentQuiz.qIdx++;
+    currentQuiz.answered = false;
+    renderQuestion();
+  }
+}
+
+function showResult(pct, total) {
+  const pass = pct >= 70;
+  document.getElementById('quiz-body').innerHTML = `
+    <div class="quiz-result">
+      <div class="quiz-result-score ${pass?'pass':'fail'}">${pct}%</div>
+      <div class="quiz-result-label">${pass ? '🎉 Passed' : '⚠ Not Passed'}</div>
+      <div class="quiz-result-msg">${pass
+        ? 'Well done! You passed this module. The next module is now unlocked.'
+        : 'You need 70% to pass. Review the material and try again.'
+      }</div>
+      <div class="quiz-result-btns">
+        ${!pass ? `<button class="quiz-retry-btn" onclick="retryQuiz()">↺ Retry Quiz</button>` : ''}
+        <button class="quiz-done-btn" onclick="closeQuiz()">Continue →</button>
+      </div>
+    </div>`;
+}
+
+function retryQuiz() {
+  currentQuiz.qIdx = 0;
+  currentQuiz.score = 0;
+  currentQuiz.answered = false;
+  renderQuestion();
+}
+
+// ══ PROGRESS ══
+function updateProgress() {
+  const done = Object.keys(quizScores).filter(k => quizScores[k] >= 70).length;
+  const pct = Math.round((done / 7) * 100);
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('overall-pct-label').textContent = pct + '%';
+}
+
+function renderProgressRows() {
+  const names = ['Intro to AutoCAD','Essential Commands','Plan & Elevation','Section & Stairs','Structural','Electrical & 3D','Final Project'];
+  let html = '';
+  names.forEach((n, i) => {
+    const id = i + 1;
+    const score = quizScores[id];
+    const pct = score !== undefined ? score : 0;
+    const done = score !== undefined;
+    html += `<div class="prog-row">
+      <span class="prog-name">M${id} · ${n}</span>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <span class="prog-pct">${done ? pct+'%' : '—'}</span>
+      <span class="prog-badge ${done ? 'done' : 'pending'}">${done ? (pct>=70?'PASSED':'FAILED') : 'PENDING'}</span>
+    </div>`;
+  });
+  document.getElementById('progress-rows').innerHTML = html;
+}
+
+// ══ CERTIFICATE ══
+function renderCertificate() {
+  const names = ['Intro to AutoCAD','Essential Commands','Plan & Elevation','Section & Stairs','Structural','Electrical & 3D','Final Project'];
+  const reqs = document.getElementById('cert-reqs');
+  let allPassed = true;
+  let html = '';
+  names.forEach((n, i) => {
+    const id = i + 1;
+    const done = quizScores[id] !== undefined && quizScores[id] >= 70;
+    if (!done) allPassed = false;
+    html += `<div class="cert-req-row"><div class="cert-req-dot ${done?'done':''}"></div>M${id} · ${n} ${done ? '✓' : ''}</div>`;
+  });
+  reqs.innerHTML = html;
+
+  if (allPassed) {
+    document.getElementById('cert-locked-view').style.display = 'none';
+    document.getElementById('cert-unlocked').style.display = 'block';
+    const scores = Object.values(quizScores);
+    const avg = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+    document.getElementById('cert-score').textContent = avg + '%';
+    document.getElementById('cert-date').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('cert-student-name').textContent = (currentUser || 'STUDENT').toUpperCase();
+  } else {
+    document.getElementById('cert-locked-view').style.display = 'block';
+    document.getElementById('cert-unlocked').style.display = 'none';
+  }
+}
+
+function printCert() {
+  const c = document.querySelector('.cert-card');
+  const w = window.open('','_blank');
+  w.document.write(`<html><head><title>Certificate</title><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"><style>body{margin:0;background:#0a0c0f;display:flex;justify-content:center;align-items:center;min-height:100vh;} .cert-card{background:#111419;border:2px solid #f5a623;padding:3rem 2.5rem;width:640px;text-align:center;font-family:'DM Sans',sans-serif;color:#e8ecf0;position:relative;} .cert-issued{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#6b7a8d;margin-bottom:1.5rem;} .cert-present{font-style:italic;font-weight:300;color:#6b7a8d;font-size:0.9rem;} .cert-name{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:3px;color:#f5a623;} .cert-desc{color:#6b7a8d;font-size:0.85rem;margin-bottom:2rem;} .cert-course-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;} .cert-course-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:#00d4ff;letter-spacing:1px;} .cert-divider{width:60px;height:2px;background:#f5a623;margin:1.5rem auto;} .cert-meta-row{display:flex;justify-content:center;gap:3rem;} .cert-meta{display:flex;flex-direction:column;align-items:center;} .cert-meta-val{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#f5a623;} .cert-meta-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#6b7a8d;text-transform:uppercase;letter-spacing:1px;} .cert-seal{margin:1.5rem auto 0;width:60px;height:60px;border:2px solid #f5a623;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}</style></head><body>${c.outerHTML}<script>window.onload=()=>window.print();<\/script></body></html>`);
+  w.document.close();
+}
+
+function shareCert() {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText('I completed the 2D & 3D CAD Micro Credential course! #AutoCAD #SketchUp #Architecture');
+    alert('Share text copied to clipboard!');
+  }
+}
+</script>
+</body>
+</html>
